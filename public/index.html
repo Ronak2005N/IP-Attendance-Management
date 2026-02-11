@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Student Attendance</title>
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/globals.css">
+</head>
+<body>
+  <a href="admin.html" class="admin-button" aria-label="Admin login">
+    <img src="Image/administrator.png" alt="Administrator" class="admin-icon">
+    <span>Admin</span>
+  </a>
+  <video id="bg-video" autoplay muted loop playsinline preload="auto">
+    <source src="css/Background/original-4fb95337149c22fbb343bf039c811cfd.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+  <main>
+    <div class="glass-container">
+      <form id="attendance-form" class="login-form">
+        <h1>Student Attendance</h1>
+        <p>Enter ID and name to mark attendance.</p>
+        <div class="input-group">
+          <label for="student_id">Student ID:</label>
+          <input type="text" id="student_id" name="student_id" required>
+        </div>
+        <div class="input-group">
+          <label for="student_name">Name:</label>
+          <input type="text" id="student_name" name="student_name" required>
+        </div>
+        <button type="submit" class="login-button">Mark Attendance</button>
+      </form>
+      <div id="animal-container"><img class="animal-body" src="" alt=""></div>
+    </div>
+  </main>
+  <div id="toast" class="toast" aria-live="polite" role="status"></div>
+  <script src="js/app.js"></script>
+</body>
+</html>

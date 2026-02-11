@@ -1,0 +1,251 @@
+{
+  "users": {},
+  "attendance": [
+    {
+      "timestamp": "2026-02-04T06:10:33.334Z",
+      "student_id": "12345",
+      "student_name": "Ronak",
+      "status": "Absent",
+      "realPublicIp": "27.61.48.14",
+      "clientIp": "127.0.0.1",
+      "expectedIp": "127.0.0.1",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "ip_mismatch"
+    },
+    {
+      "timestamp": "2026-02-04T06:10:35.788Z",
+      "student_id": "12345",
+      "student_name": "Ronak",
+      "status": "Absent",
+      "realPublicIp": "27.61.48.14",
+      "clientIp": "127.0.0.1",
+      "expectedIp": "127.0.0.1",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "ip_mismatch"
+    },
+    {
+      "timestamp": "2026-02-04T06:10:48.389Z",
+      "student_id": "12345",
+      "student_name": "Ronak",
+      "status": "Absent",
+      "realPublicIp": "27.61.48.14",
+      "clientIp": "127.0.0.1",
+      "expectedIp": "127.0.0.1",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "ip_mismatch"
+    },
+    {
+      "timestamp": "2026-02-04T06:10:50.625Z",
+      "student_id": "12345",
+      "student_name": "Ronak",
+      "status": "Absent",
+      "realPublicIp": "27.61.48.14",
+      "clientIp": "127.0.0.1",
+      "expectedIp": "127.0.0.1",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "ip_mismatch"
+    },
+    {
+      "timestamp": "2026-02-11T03:56:00.216Z",
+      "student_id": "21120",
+      "student_name": "Ronak",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "127.0.0.1",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip"
+    },
+    {
+      "timestamp": "2026-02-11T03:57:17.093Z",
+      "student_id": "21120",
+      "student_name": "Ronak",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "127.0.0.1",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip"
+    },
+    {
+      "timestamp": "2026-02-11T04:03:34.809Z",
+      "student_id": "21120",
+      "student_name": "Ronak",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "127.0.0.1",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip"
+    },
+    {
+      "timestamp": "2026-02-11T04:07:22.900Z",
+      "student_id": "TEST001",
+      "student_name": "Test Student",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "127.0.0.1",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip"
+    },
+    {
+      "timestamp": "2026-02-11T04:08:18.590Z",
+      "student_id": "21120",
+      "student_name": "Ronak",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "127.0.0.1",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip"
+    },
+    {
+      "timestamp": "2026-02-11T04:09:13.256Z",
+      "student_id": "211203773783737823",
+      "student_name": "VIJAYY",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "127.0.0.1",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip"
+    },
+    {
+      "timestamp": "2026-02-11T04:11:45.940Z",
+      "student_id": "VERIFY001",
+      "student_name": "Verify Test",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "127.0.0.1",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip"
+    },
+    {
+      "timestamp": "2026-02-11T04:15:13.669Z",
+      "student_id": "21120SDCE",
+      "student_name": "RonakASASASA",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "127.0.0.1",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip"
+    },
+    {
+      "timestamp": "2026-02-11T04:20:33.302Z",
+      "student_id": "STRUCT001",
+      "student_name": "Alice Johnson",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "127.0.0.1",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip"
+    },
+    {
+      "timestamp": "2026-02-11T04:20:35.069Z",
+      "student_id": "STRUCT002",
+      "student_name": "Bob Smith",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "127.0.0.1",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip"
+    },
+    {
+      "timestamp": "2026-02-11T04:20:36.828Z",
+      "student_id": "STRUCT003",
+      "student_name": "Charlie Brown",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "127.0.0.1",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip"
+    },
+    {
+      "timestamp": "2026-02-11T04:21:53.315Z",
+      "student_id": "U001",
+      "student_name": "Ronak Patel",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "127.0.0.1",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip"
+    },
+    {
+      "timestamp": "2026-02-11T04:21:53.379Z",
+      "student_id": "U002",
+      "student_name": "Harsh Sharma",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "127.0.0.1",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip"
+    },
+    {
+      "timestamp": "2026-02-11T04:21:53.440Z",
+      "student_id": "U003",
+      "student_name": "Priya Singh",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "127.0.0.1",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip"
+    },
+    {
+      "timestamp": "2026-02-11T04:21:53.506Z",
+      "student_id": "U004",
+      "student_name": "Vikram Kumar",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "127.0.0.1",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip"
+    },
+    {
+      "timestamp": "2026-02-11T04:21:53.571Z",
+      "student_id": "U005",
+      "student_name": "Aisha Ahmed",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "127.0.0.1",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip"
+    },
+    {
+      "timestamp": "2026-02-11T04:27:55.106Z",
+      "student_id": "21120SDCE",
+      "student_name": "RonakASASASA",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "127.0.0.1",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip"
+    },
+    {
+      "timestamp": "2026-02-11T05:22:34.540Z",
+      "student_id": "23112025",
+      "student_name": "Ronak",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "127.0.0.1",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip"
+    }
+  ]
+}

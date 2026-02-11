@@ -1,0 +1,4 @@
+1. npm install --save-dev nodemon
+2. npm install -g nodemon
+3. run dev
+4. npm install cors

@@ -1,0 +1,20 @@
+/* layout.css — contains font-face rules (kept minimal) */
+
+@font-face {
+  font-family: '__Inter_f367f3';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/_next/static/media/ba9851c3c22cd980-s.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: '__Inter_Fallback_f367f3';
+  src: local("Arial");
+  ascent-override: 90.49%;
+  descent-override: 22.56%;
+  line-gap-override: 0.00%;
+  size-adjust: 107.06%;
+}
+
+.__className_f367f3 { font-family: '__Inter_f367f3', '__Inter_Fallback_f367f3'; font-style: normal; }

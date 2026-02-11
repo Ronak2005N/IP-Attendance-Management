@@ -1,0 +1,173 @@
+  <head>
+  <meta charset="UTF-8">
+  <title>Admin Page</title>
+  </head> 
+  <style>
+    :root{
+      --bg: rgba(10,12,20,0.6);
+      --glass: rgba(255,255,255,0.06);
+      --accent: #0c5cc2;
+      --danger: #dc2630;
+      --text: #eef2f7;
+      --muted: rgba(238,242,247,0.66);
+      --radius: 14px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;}
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background: linear-gradient(180deg,#07111a 0%, #0b1220 100%);
+      color:var(--text);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:32px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+    }
+
+    .page-wrap{width:100%;max-width:1100px;display:grid;grid-template-columns:360px 1fr;gap:28px;}
+
+    /* Left panel - controls */
+    .panel{background:var(--glass);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:20px;border-radius:var(--radius);box-shadow:0 12px 40px rgba(2,8,23,0.6)}
+    .panel h2{margin:0 0 10px;font-size:1.2rem}
+    .panel p.help{color:var(--muted);font-size:0.92rem;margin-bottom:12px}
+
+    .field{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+    .field input[type=password]{flex:1;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:var(--text);outline:none}
+    .field button{padding:10px 14px;border-radius:10px;border:none;background:var(--accent);color:white;font-weight:600;cursor:pointer}
+    .field button:active{transform:translateY(1px)}
+
+    .error{color:var(--danger);margin-top:6px}
+
+    /* Right panel - table */
+    .table-wrap{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:var(--radius);padding:18px;border:1px solid rgba(255,255,255,0.04);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);box-shadow:0 8px 30px rgba(2,8,23,0.55)}
+    table{width:100%;border-collapse:collapse;font-size:0.95rem}
+    thead th{background:transparent;text-align:left;padding:10px 12px;color:var(--muted);font-weight:600;border-bottom:1px solid rgba(255,255,255,0.04)}
+    tbody td{padding:10px 12px;border-bottom:1px dashed rgba(255,255,255,0.03);color:var(--text)}
+
+    .status-present{color:#10b981;font-weight:700}
+    .status-absent{color:#f97316;font-weight:700}
+
+    /* responsive */
+    @media (max-width:880px){
+      .page-wrap{grid-template-columns:1fr;}
+      body{padding:18px}
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrap">
+    <div class="panel">
+      <h2>Admin Panel</h2>
+      <p class="help">Password.</p>
+      <div class="field">
+        <input type="password" id="token" placeholder="Admin Token" />
+        <button onclick="loadData()">View Records</button>
+      </div>
+      <div id="error" class="error"></div>
+      <p style="margin-top:8px;font-size:0.85rem;color:var(--muted)">Team 7</p>
+    </div>
+
+    <div class="table-wrap">
+      <h2 style="margin-top:0;margin-bottom:8px">Attendance Records</h2>
+      <table id="attendanceTable" style="display:none;">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>IP Address</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div id="emptyMsg" style="color:var(--muted);display:none;padding:12px 0">No records to display.</div>
+    </div>
+  </div>
+
+  <script>
+    async function loadData() {
+      const token = document.getElementById('token').value;
+      const errorDiv = document.getElementById('error');
+      const table = document.getElementById('attendanceTable');
+      const tbody = table.querySelector('tbody');
+      const emptyMsg = document.getElementById('emptyMsg');
+      errorDiv.textContent = '';
+      tbody.innerHTML = '';
+      table.style.display = 'none';
+      emptyMsg.style.display = 'none';
+
+      try {
+        const res = await fetch('/api/attendance/records', {
+          headers: { 'Authorization': token }
+        });
+
+        if (res.status === 401) {
+          throw new Error('Unauthorized — token rejected. Ensure `ADMIN_TOKEN` is set on the server and matches the value you entered.');
+        }
+
+        if (!res.ok) {
+          throw new Error('Failed to fetch records. Status: ' + res.status);
+        }
+
+        const response = await res.json();
+        
+        // Response is now a direct array of records
+        const data = Array.isArray(response) ? response : [];
+        
+        if (!data || data.length === 0) {
+          emptyMsg.style.display = 'block';
+          return;
+        }
+
+        // store token locally for convenience
+        try { localStorage.setItem('admin_token', token); } catch (e) {}
+
+        table.style.display = 'table';
+        data.forEach(row => {
+          const tr = document.createElement('tr');
+          const statusClass = (row.status || '').toLowerCase().includes('present') ? 'status-present' : 'status-absent';
+          
+          // Dates are now in YYYY-MM-DD format from backend
+          let displayDate = '';
+          let displayTime = '';
+          
+          if (row.date) {
+            displayDate = row.date; // Already formatted as YYYY-MM-DD
+          }
+          if (row.time) {
+            displayTime = row.time; // Already formatted as HH:MM:SS
+          }
+
+          tr.innerHTML = `
+            <td>${row.id || ''}</td>
+            <td>${row.name || ''}</td>
+            <td>${displayDate}</td>
+            <td>${displayTime}</td>
+            <td>${row.ip || ''}</td>
+            <td class="${statusClass}">${row.status || ''}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        table.style.display = 'none';
+        emptyMsg.style.display = 'none';
+        console.error(err);
+        errorDiv.textContent = err.message || 'Unexpected error';
+      }
+    }
+
+    // Prefill token from localStorage for convenience
+    document.addEventListener('DOMContentLoaded', () => {
+      try {
+        const saved = localStorage.getItem('admin_token');
+        if (saved) document.getElementById('token').value = saved;
+      } catch (e) {}
+    });
+  </script>
+</body>
+</html>
