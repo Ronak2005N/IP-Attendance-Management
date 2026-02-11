@@ -4,6 +4,7 @@ const path = require('path');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const fs = require('fs');
+const os = require('os');
 
 // Load environment variables FIRST before importing anything that uses them
 dotenv.config();
@@ -131,6 +132,28 @@ function possibleProxy(req) {
   return raw && raw.split(',').length > 1;
 }
 
+/**
+ * Return array of local IPv4 addresses (non-internal)
+ * @returns {string[]} IPv4 addresses
+ */
+function getLocalIPv4Addresses() {
+  try {
+    const nets = os.networkInterfaces();
+    const results = [];
+    for (const name of Object.keys(nets)) {
+      for (const net of nets[name]) {
+        if (net.family === 'IPv4' && !net.internal) {
+          results.push(net.address);
+        }
+      }
+    }
+    return results;
+  } catch (err) {
+    console.error('[IP_HELPER] Could not determine local interfaces:', err.message);
+    return [];
+  }
+}
+
 // ============================================================================
 // ROUTES
 // ============================================================================
@@ -218,23 +241,35 @@ app.post('/api/attendance/mark', async (req, res) => {
 
     // ========== ATTENDANCE LOGIC ==========
     try {
-      // Rule 1: Private IP (127.0.0.1, 192.168.x.x, etc.) = Mark Absent
-      if (isPrivate) {
+      // Determine local IPs and allow a local loopback request to be treated
+      // as coming from the machine's LAN IP when the expected IP matches.
+      const localIps = getLocalIPv4Addresses();
+      let clientIpForComparison = clientIp;
+
+      // If request came from loopback but the expected IP is one of the
+      // machine's LAN addresses, treat it as that LAN IP for matching.
+      if ((clientIp === '127.0.0.1' || clientIp === '::1') && allowedIp && localIps.includes(allowedIp)) {
+        clientIpForComparison = allowedIp;
+        console.log(`[${requestId}] Loopback request mapped to local LAN IP for comparison: ${clientIpForComparison}`);
+      }
+
+      // Rule 1: IP matches expected = Mark Present (checked first)
+      if (allowedIp && clientIpForComparison === allowedIp) {
+        status = 'Present';
+        reason = 'ip_matched';
+        console.log(`[${requestId}] Marked Present: IP matched (${clientIpForComparison})`);
+      }
+      // Rule 2: Private IP (127.0.0.1, 192.168.x.x, etc.) = Mark Absent
+      else if (isPrivate) {
         status = 'Absent';
         reason = 'private_ip';
         console.log(`[${requestId}] Marked Absent: Private IP detected (${clientIp})`);
       }
-      // Rule 2: No expected IP set = Mark Absent
+      // Rule 3: No expected IP set = Mark Absent
       else if (!allowedIp) {
         status = 'Absent';
         reason = 'missing_expected_ip';
         console.log(`[${requestId}] Marked Absent: No expected IP configured for student`);
-      }
-      // Rule 3: IP matches expected = Mark Present
-      else if (clientIp === allowedIp) {
-        status = 'Present';
-        reason = 'ip_matched';
-        console.log(`[${requestId}] Marked Present: IP matched (${clientIp})`);
       }
       // Rule 4: IP doesn't match = Mark Absent
       else {

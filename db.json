@@ -246,6 +246,83 @@
       "isPrivate": true,
       "proxy": "",
       "reason": "private_ip"
+    },
+    {
+      "timestamp": "2026-02-11T16:01:44.283Z",
+      "student_id": "21120",
+      "student_name": "Ronak",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "127.0.0.1",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip"
+    },
+    {
+      "timestamp": "2026-02-11T16:04:22.251Z",
+      "student_id": "2112025",
+      "student_name": "Shonak",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "127.0.0.1",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip"
+    },
+    {
+      "timestamp": "2026-02-11T16:04:32.133Z",
+      "student_id": "2112025",
+      "student_name": "Shonak",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "192.168.1.7",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip"
+    },
+    {
+      "timestamp": "2026-02-11T16:06:14.493Z",
+      "student_id": "21120SDCE",
+      "student_name": "RonakASASASA",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "192.168.1.7",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip"
+    },
+    {
+      "timestamp": "2026-02-11T16:10:54.365Z",
+      "student_id": "21120SDCE",
+      "student_name": "RonakASASASA",
+      "status": "Present",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "192.168.1.7",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "ip_matched"
+    },
+    {
+      "timestamp": "2026-02-11T16:12:47.289Z",
+      "student_id": "12345",
+      "student_name": "John",
+      "status": "Present",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "192.168.1.7",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "ip_matched"
+    },
+    {
+      "timestamp": "2026-02-11T16:13:28.035Z",
+      "student_id": "123456",
+      "student_name": "John doe",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "192.168.1.7",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip"
     }
   ]
 }
