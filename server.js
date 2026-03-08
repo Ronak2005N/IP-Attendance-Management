@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const fs = require('fs');
 const os = require('os');
+const crypto = require('crypto');
 
 // Load environment variables FIRST before importing anything that uses them
 dotenv.config();
@@ -22,10 +23,21 @@ try {
 
 const app = express(); // Initialize app first
 
+// Store active session timers
+const sessionTimers = new Map();
+
 // Middleware - CORS and JSON parsing
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '10mb' })); // Increased limit for base64 selfie images
 app.use(express.static('public'));
+
+// Serve uploaded selfies as static files at /uploads
+const uploadsDir = path.join(__dirname, 'uploads', 'selfies');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+  console.log('[INIT] Created uploads/selfies/ directory');
+}
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Configuration
 const PORT = process.env.PORT || 3000;
@@ -43,6 +55,24 @@ if (!ADMIN_TOKEN) {
 // ============================================================================
 // UTILITY FUNCTIONS
 // ============================================================================
+
+/**
+ * Save a base64-encoded image to uploads/selfies/
+ * @param {string} base64String Base64 image data (with or without data URI prefix)
+ * @param {string} studentId Student ID for file naming
+ * @returns {string} Relative path to saved file (e.g. uploads/selfies/21CS001_171500100.jpg)
+ */
+function saveBase64Image(base64String, studentId) {
+  // Strip the data URI prefix if present (e.g. "data:image/jpeg;base64,")
+  const base64Data = base64String.replace(/^data:image\/\w+;base64,/, '');
+  const buffer = Buffer.from(base64Data, 'base64');
+  const timestamp = Date.now();
+  const fileName = `${studentId}_${timestamp}.jpg`;
+  const filePath = path.join(__dirname, 'uploads', 'selfies', fileName);
+  fs.writeFileSync(filePath, buffer);
+  console.log(`[SELFIE] Saved selfie: uploads/selfies/${fileName}`);
+  return `uploads/selfies/${fileName}`;
+}
 
 /**
  * Extract client IP from request
@@ -187,7 +217,7 @@ app.post('/api/attendance/mark', async (req, res) => {
     console.log(`[${requestId}] POST /api/attendance/mark - Request started`);
     
     // ========== VALIDATION ==========
-    const { student_id, student_name } = req.body;
+    const { student_id, student_name, deviceId, selfie } = req.body;
     
     if (!student_id || !student_name) {
       console.warn(`[${requestId}] Missing student_id or student_name in request body`);
@@ -196,8 +226,73 @@ app.post('/api/attendance/mark', async (req, res) => {
         success: false,
       });
     }
+
+    // Require deviceId for anti-proxy protection
+    if (!deviceId) {
+      console.warn(`[${requestId}] Missing deviceId in request body`);
+      return res.status(400).json({
+        message: 'Device ID is required. Please allow device identification.',
+        success: false,
+      });
+    }
+
+    // Require selfie image for visual verification
+    if (!selfie) {
+      console.warn(`[${requestId}] Missing selfie in request body`);
+      return res.status(400).json({
+        message: 'Selfie image is required. Please capture a selfie before submitting.',
+        success: false,
+      });
+    }
     
-    console.log(`[${requestId}] Student: ${student_id} (${student_name})`);
+    console.log(`[${requestId}] Student: ${student_id} (${student_name}), Device: ${deviceId}`);
+
+    // ========== SESSION CHECK ==========
+    const session = db.getActiveSession();
+    if (!session) {
+      console.warn(`[${requestId}] No active attendance session`);
+      return res.status(400).json({
+        message: 'No active attendance session. Please wait for the teacher to start a session.',
+        success: false,
+      });
+    }
+
+    // Check if session has expired (time-based check)
+    const now = new Date();
+    const endTime = new Date(session.end_time);
+    if (endTime && now > endTime) {
+      console.warn(`[${requestId}] Session ${session.session_id} has expired`);
+      // Auto-close the expired session
+      db.endSession(session.session_id);
+      return res.status(400).json({
+        message: 'Session has expired. The 3-minute window has closed.',
+        success: false,
+      });
+    }
+
+    // ========== DEVICE REUSE CHECK ==========
+    // Skip check if session allows multiple submissions per device
+    const allowMultiple = session.allow_multiple_devices === true;
+    if (!allowMultiple && session.used_devices.includes(deviceId)) {
+      console.warn(`[${requestId}] Device ${deviceId} already used in session ${session.session_id} (allow_multiple: ${allowMultiple})`);
+      return res.status(400).json({
+        message: 'This device has already submitted attendance.',
+        success: false,
+      });
+    }
+    
+    if (allowMultiple) {
+      console.log(`[${requestId}] Device reuse allowed for session ${session.session_id}`);
+    }
+
+    // ========== ATTENDANCE LIMIT CHECK ==========
+    if (session.current_count >= session.max_limit) {
+      console.warn(`[${requestId}] Session ${session.session_id} limit reached (${session.current_count}/${session.max_limit})`);
+      return res.status(400).json({
+        message: 'Attendance limit reached.',
+        success: false,
+      });
+    }
 
     // ========== IP EXTRACTION & VALIDATION ==========
     let clientIp = '';
@@ -307,6 +402,27 @@ app.post('/api/attendance/mark', async (req, res) => {
       // Continue anyway - don't fail the request
     }
 
+    // ========== SAVE SELFIE & REGISTER DEVICE ==========
+    let selfiePath = '';
+    try {
+      selfiePath = saveBase64Image(selfie, student_id);
+      console.log(`[${requestId}] Selfie saved: ${selfiePath}`);
+    } catch (selfieError) {
+      console.error(`[${requestId}] Selfie save error:`, selfieError.message);
+      return res.status(500).json({
+        message: 'Server error saving selfie image.',
+        success: false,
+      });
+    }
+
+    // Register the device in the active session
+    try {
+      db.addDeviceToSession(session.session_id, deviceId);
+      console.log(`[${requestId}] Device registered in session (count: ${session.current_count + 1}/${session.max_limit})`);
+    } catch (sessionError) {
+      console.error(`[${requestId}] Session update error:`, sessionError.message);
+    }
+
     // ========== SAVE TO EXCEL ==========
     try {
       const timestamp = new Date();
@@ -339,14 +455,16 @@ app.post('/api/attendance/mark', async (req, res) => {
         isNewFile = true;
         
         // Add header row with EXACT column order required
-        // 1. ID, 2. Name, 3. Date, 4. Time, 5. IP Address, 6. Status
+        // 1. ID, 2. Name, 3. Date, 4. Time, 5. IP Address, 6. Status, 7. Device ID, 8. Selfie
         const headerRow = worksheet.addRow([
           'ID',
           'Name',
           'Date',
           'Time',
           'IP Address',
-          'Status'
+          'Status',
+          'Device ID',
+          'Selfie'
         ]);
         
         // Format header row
@@ -361,19 +479,23 @@ app.post('/api/attendance/mark', async (req, res) => {
           { width: 15 }, // Date (YYYY-MM-DD)
           { width: 15 }, // Time (HH:MM:SS)
           { width: 18 }, // IP Address
-          { width: 12 }  // Status
+          { width: 12 }, // Status
+          { width: 38 }, // Device ID
+          { width: 35 }  // Selfie
         ];
       }
 
       // Add the attendance record row with EXACT column order
-      // Must match: ID, Name, Date, Time, IP Address, Status
+      // Must match: ID, Name, Date, Time, IP Address, Status, Device ID, Selfie
       const dataRow = worksheet.addRow([
         student_id,        // ID (Column 1)
         student_name,      // Name (Column 2)
         dateStr,           // Date (Column 3)
         timeStr,           // Time (Column 4)
         clientIp,          // IP Address (Column 5)
-        status             // Status (Column 6)
+        status,            // Status (Column 6)
+        deviceId,          // Device ID (Column 7)
+        selfiePath         // Selfie path (Column 8)
       ]);
       
       // Format data row for better visibility
@@ -411,6 +533,8 @@ app.post('/api/attendance/mark', async (req, res) => {
         isPrivate,
         proxy,
         reason,
+        deviceId,
+        selfie_path: selfiePath,
       });
       console.log(`[${requestId}] Attendance saved to JSON database`);
     } catch (dbError) {
@@ -475,6 +599,181 @@ app.get('/api/my-ip', (req, res) => {
       message: 'Could not determine your IP address',
       error: process.env.NODE_ENV === 'development' ? err.message : undefined,
     });
+  }
+});
+
+// ── GET /api/server-ip ──────────────────────────────────────────────────────
+// Returns the server's local IPv4 address so the admin can see which
+// hotspot IP students must connect through for attendance.
+app.get('/api/server-ip', (req, res) => {
+  try {
+    const addresses = getLocalIPv4Addresses();
+    const ip = addresses.length > 0 ? addresses[0] : 'IP Not Found';
+    console.log(`[API] GET /api/server-ip → ${ip}`);
+    res.json({ ip });
+  } catch (err) {
+    console.error('[API] Error in /api/server-ip:', err.message);
+    res.status(500).json({ ip: 'Error retrieving IP' });
+  }
+});
+
+// ============================================================================
+// SESSION MANAGEMENT ROUTES
+// ============================================================================
+
+/**
+ * POST /api/session/start — Start a new attendance session (admin-protected)
+ * Body: { max_limit: NUMBER }
+ */
+app.post('/api/session/start', (req, res) => {
+  try {
+    const token = req.headers['authorization'] || req.query.token || '';
+    if (!ADMIN_TOKEN || token !== ADMIN_TOKEN) {
+      return res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
+
+    // End any currently active session first
+    const existing = db.getActiveSession();
+    if (existing) {
+      db.endSession(existing.session_id);
+      console.log(`[API] Auto-ended previous session: ${existing.session_id}`);
+    }
+
+    const { max_limit, allow_multiple_devices } = req.body;
+    if (!max_limit || typeof max_limit !== 'number' || max_limit < 1) {
+      return res.status(400).json({ success: false, message: 'max_limit (positive number) is required.' });
+    }
+
+    const startTime = new Date();
+    const endTime = new Date(startTime.getTime() + 2 * 60 * 1000); // 2 minutes from now
+
+    const sessionData = {
+      session_id: crypto.randomUUID(),
+      max_limit,
+      current_count: 0,
+      used_devices: [],
+      active: true,
+      allow_multiple_devices: allow_multiple_devices || false,
+      start_time: startTime.toISOString(),
+      end_time: endTime.toISOString(),
+      duration_minutes: 2,
+    };
+
+    db.createSession(sessionData);
+    console.log(`[API] POST /api/session/start — Session ${sessionData.session_id} started (limit: ${max_limit}, duration: 2 min)`);
+
+    // Auto-close session after 2 minutes
+    const timerId = setTimeout(() => {
+      try {
+        const session = db.getActiveSession();
+        if (session && session.session_id === sessionData.session_id) {
+          db.endSession(sessionData.session_id);
+          console.log(`[SESSION] Auto-closed session ${sessionData.session_id} after 2 minutes`);
+        }
+        sessionTimers.delete(sessionData.session_id);
+      } catch (err) {
+        console.error('[SESSION] Error auto-closing session:', err.message);
+      }
+    }, 2 * 60 * 1000);
+
+    sessionTimers.set(sessionData.session_id, timerId);
+
+    res.json({ success: true, message: 'Session started', session: sessionData });
+  } catch (err) {
+    console.error('[API] Error in /api/session/start:', err.message);
+    res.status(500).json({ success: false, message: 'Server error starting session' });
+  }
+});
+
+/**
+ * POST /api/session/end — End the currently active session (admin-protected)
+ */
+app.post('/api/session/end', (req, res) => {
+  try {
+    const token = req.headers['authorization'] || req.query.token || '';
+    if (!ADMIN_TOKEN || token !== ADMIN_TOKEN) {
+      return res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
+
+    const session = db.endSession(null); // ends active session
+    if (!session) {
+      return res.status(400).json({ success: false, message: 'No active session to end.' });
+    }
+
+    // Cancel the auto-close timer if it exists
+    if (sessionTimers.has(session.session_id)) {
+      clearTimeout(sessionTimers.get(session.session_id));
+      sessionTimers.delete(session.session_id);
+    }
+
+    console.log(`[API] POST /api/session/end — Session ${session.session_id} ended`);
+    res.json({ success: true, message: 'Session ended', session });
+  } catch (err) {
+    console.error('[API] Error in /api/session/end:', err.message);
+    res.status(500).json({ success: false, message: 'Server error ending session' });
+  }
+});
+
+/**
+ * GET /api/session/active — Get the currently active session (public)
+ */
+app.get('/api/session/active', (req, res) => {
+  try {
+    const session = db.getActiveSession();
+    if (!session) {
+      return res.json({ active: false, message: 'No active session' });
+    }
+
+    // Calculate end_time if missing (for old sessions created before timer feature)
+    let endTime = session.end_time;
+    if (!endTime && session.start_time) {
+      const startTime = new Date(session.start_time);
+      endTime = new Date(startTime.getTime() + 2 * 60 * 1000).toISOString();
+    }
+
+    // Check if session has expired
+    const now = new Date();
+    const endTimeDate = new Date(endTime);
+    if (now > endTimeDate) {
+      // Session expired, auto-close it
+      db.endSession(session.session_id);
+      if (sessionTimers.has(session.session_id)) {
+        clearTimeout(sessionTimers.get(session.session_id));
+        sessionTimers.delete(session.session_id);
+      }
+      return res.json({ active: false, message: 'Session expired' });
+    }
+
+    res.json({
+      active: true,
+      session_id: session.session_id,
+      max_limit: session.max_limit,
+      current_count: session.current_count,
+      start_time: session.start_time,
+      end_time: endTime,
+      duration_minutes: session.duration_minutes || 2,
+      allow_multiple_devices: session.allow_multiple_devices || false,
+    });
+  } catch (err) {
+    console.error('[API] Error in /api/session/active:', err.message);
+    res.status(500).json({ active: false, message: 'Server error' });
+  }
+});
+
+/**
+ * GET /api/sessions — Get all sessions (admin-protected)
+ */
+app.get('/api/sessions', (req, res) => {
+  try {
+    const token = req.headers['authorization'] || req.query.token || '';
+    if (!ADMIN_TOKEN || token !== ADMIN_TOKEN) {
+      return res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
+    const sessions = db.getAllSessions();
+    res.json(sessions);
+  } catch (err) {
+    console.error('[API] Error in /api/sessions:', err.message);
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 
@@ -604,7 +903,7 @@ app.get('/api/attendance/records', async (req, res) => {
           sheet.eachRow((row, rowNumber) => {
             if (rowNumber === 1) return; // skip header
 
-            // Read columns in EXACT order: ID, Name, Date, Time, IP Address, Status
+            // Read columns in EXACT order: ID, Name, Date, Time, IP Address, Status, Device ID, Selfie
             const values = row.values;
             
             // Extract values from row
@@ -615,6 +914,8 @@ app.get('/api/attendance/records', async (req, res) => {
             // values[4] = Time
             // values[5] = IP Address
             // values[6] = Status
+            // values[7] = Device ID
+            // values[8] = Selfie path
             
             const id = values[1] ? String(values[1]).trim() : '';
             const name = values[2] ? String(values[2]).trim() : '';
@@ -622,6 +923,7 @@ app.get('/api/attendance/records', async (req, res) => {
             const time = values[4] ? String(values[4]).trim() : '';
             const ip = values[5] ? String(values[5]).trim() : '';
             const status = values[6] ? String(values[6]).trim() : '';
+            const selfie_path = values[8] ? String(values[8]).trim() : '';
 
             // Only add if we have at least ID and name
             if (id || name) {
@@ -631,7 +933,8 @@ app.get('/api/attendance/records', async (req, res) => {
                 date: date,        // Already in YYYY-MM-DD format from writing
                 time: time,        // Already in HH:MM:SS format from writing
                 ip: ip,
-                status: status
+                status: status,
+                selfie_path: selfie_path
               });
             }
           });
@@ -668,7 +971,8 @@ app.get('/api/attendance/records', async (req, res) => {
           date: date,
           time: time,
           ip: record.clientIp || '',
-          status: record.status || ''
+          status: record.status || '',
+          selfie_path: record.selfie_path || ''
         };
       });
     }

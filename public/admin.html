@@ -27,7 +27,7 @@
       justify-content:center;
     }
 
-    .page-wrap{width:100%;max-width:1100px;display:grid;grid-template-columns:360px 1fr;gap:28px;}
+    .page-wrap{width:100%;max-width:1280px;display:grid;grid-template-columns:360px 1fr;gap:28px;}
 
     /* Left panel - controls */
     .panel{background:var(--glass);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:20px;border-radius:var(--radius);box-shadow:0 12px 40px rgba(2,8,23,0.6)}
@@ -50,6 +50,24 @@
     .status-present{color:#10b981;font-weight:700}
     .status-absent{color:#f97316;font-weight:700}
 
+    /* Session controls */
+    .session-box{margin-top:18px;padding:14px;background:rgba(255,255,255,0.04);border-radius:10px;border:1px solid rgba(255,255,255,0.06)}
+    .session-box h3{margin:0 0 10px;font-size:0.95rem;color:var(--muted)}
+    .session-box input[type=number]{width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:var(--text);outline:none;margin-bottom:10px;font-size:0.95rem}
+    .session-box .btn-row{display:flex;gap:8px}
+    .session-box button{flex:1;padding:10px 0;border-radius:10px;border:none;font-weight:600;cursor:pointer;font-size:0.9rem}
+    .btn-start{background:#10b981;color:#fff}
+    .btn-end{background:var(--danger);color:#fff}
+    .session-status{margin-top:10px;padding:10px;border-radius:8px;font-size:0.88rem;line-height:1.5}
+    .session-active{background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);color:#10b981}
+    .session-inactive{background:rgba(249,115,22,0.10);border:1px solid rgba(249,115,22,0.2);color:#f97316}
+    .timer-display{font-size:1.3rem;font-weight:800;margin-top:8px;letter-spacing:1px;color:#10b981}
+    .timer-warning{color:#f97316!important}
+
+    /* Selfie thumbnail in table */
+    .selfie-thumb{width:80px;height:auto;border-radius:6px;cursor:pointer;transition:transform .15s}
+    .selfie-thumb:hover{transform:scale(1.1)}
+
     /* responsive */
     @media (max-width:880px){
       .page-wrap{grid-template-columns:1fr;}
@@ -68,6 +86,27 @@
       </div>
       <div id="error" class="error"></div>
       <p style="margin-top:8px;font-size:0.85rem;color:var(--muted)">Team 7</p>
+
+      <!-- Allowed Network IP display -->
+      <div id="networkInfo" style="margin-top:18px;padding:14px;background:rgba(255,255,255,0.04);border-radius:10px;border:1px solid rgba(255,255,255,0.06)">
+        <h3 style="margin:0 0 6px;font-size:0.95rem;color:var(--muted)">Allowed Network IP</h3>
+        <p id="serverIP" style="margin:0;font-size:1.15rem;font-weight:700;letter-spacing:0.5px;color:#10b981">Loading...</p>
+      </div>
+
+      <!-- Session control section -->
+      <div class="session-box">
+        <h3>Attendance Session</h3>
+        <input type="number" id="maxLimit" placeholder="Max students allowed" min="1" />
+        <div style="margin:10px 0;display:flex;align-items:center;gap:8px">
+          <input type="checkbox" id="allowMultipleDevices" style="cursor:pointer">
+          <label for="allowMultipleDevices" style="cursor:pointer;font-size:0.9rem;color:var(--text)">Allow multiple submissions per device</label>
+        </div>
+        <div class="btn-row">
+          <button class="btn-start" onclick="startSession()">▶ Start Session</button>
+          <button class="btn-end" onclick="endSession()">■ End Session</button>
+        </div>
+        <div id="sessionStatus"></div>
+      </div>
     </div>
 
     <div class="table-wrap">
@@ -81,6 +120,7 @@
             <th>Time</th>
             <th>IP Address</th>
             <th>Status</th>
+            <th>Selfie</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -150,6 +190,7 @@
             <td>${displayTime}</td>
             <td>${row.ip || ''}</td>
             <td class="${statusClass}">${row.status || ''}</td>
+            <td>${row.selfie_path ? `<img src="/${row.selfie_path}" class="selfie-thumb" onclick="window.open('/${row.selfie_path}','_blank')" alt="selfie">` : '<span style="color:var(--muted)">N/A</span>'}</td>
           `;
           tbody.appendChild(tr);
         });
@@ -167,7 +208,156 @@
         const saved = localStorage.getItem('admin_token');
         if (saved) document.getElementById('token').value = saved;
       } catch (e) {}
+
+      // Fetch and display the server's local IP address
+      fetch('/api/server-ip')
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('serverIP').innerText = data.ip || 'Unavailable';
+        })
+        .catch(() => {
+          document.getElementById('serverIP').innerText = 'Could not load IP';
+        });
+
+      // Load current session status on page load
+      loadSessionStatus();
+      // Update countdown every second
+      setInterval(updateSessionCountdown, 1000);
     });
+
+    // ================================================================
+    // SESSION MANAGEMENT
+    // ================================================================
+
+    let sessionCountdownInterval = null;
+
+    /** Update the countdown timer display */
+    function updateSessionCountdown() {
+      const statusDiv = document.getElementById('sessionStatus');
+      if (!statusDiv || !statusDiv.dataset.endTime) return;
+
+      const now = new Date();
+      const endTime = new Date(statusDiv.dataset.endTime);
+      
+      // Check if end time is valid
+      if (isNaN(endTime.getTime())) {
+        console.error('Invalid end time:', statusDiv.dataset.endTime);
+        return;
+      }
+
+      const remaining = Math.max(0, Math.floor((endTime - now) / 1000));
+
+      if (remaining <= 0) {
+        loadSessionStatus(); // Refresh status (session should be closed)
+        return;
+      }
+
+      const minutes = Math.floor(remaining / 60);
+      const seconds = remaining % 60;
+      const timerElement = statusDiv.querySelector('.timer-display');
+      if (timerElement) {
+        timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        // Warning color if less than 1 minute
+        if (remaining < 60) {
+          timerElement.classList.add('timer-warning');
+        } else {
+          timerElement.classList.remove('timer-warning');
+        }
+      }
+    }
+
+    /** Fetch and display the current session status */
+    async function loadSessionStatus() {
+      const statusDiv = document.getElementById('sessionStatus');
+      try {
+        const res = await fetch('/api/session/active');
+        const data = await res.json();
+        if (data.active) {
+          statusDiv.className = 'session-status session-active';
+          
+          // Calculate end_time if missing (for sessions created before timer feature)
+          let endTime = data.end_time;
+          if (!endTime && data.start_time) {
+            const startTime = new Date(data.start_time);
+            endTime = new Date(startTime.getTime() + 2 * 60 * 1000).toISOString();
+          }
+          
+          statusDiv.dataset.endTime = endTime;
+          
+          // Get session settings from backend
+          const multiDeviceText = data.allow_multiple_devices ? '✓ Multiple devices allowed' : '✗ One device per session';
+          
+          // Calculate initial time remaining
+          let timerText = '2:00';
+          if (endTime) {
+            const now = new Date();
+            const endTimeDate = new Date(endTime);
+            if (!isNaN(endTimeDate.getTime())) {
+              const remaining = Math.max(0, Math.floor((endTimeDate - now) / 1000));
+              const minutes = Math.floor(remaining / 60);
+              const seconds = remaining % 60;
+              timerText = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }
+          }
+          
+          statusDiv.innerHTML = `<strong>Session Active</strong><br>ID: ${data.session_id.slice(0,8)}…<br>Students: ${data.current_count} / ${data.max_limit}<br>${multiDeviceText}<br>Time Remaining: <div class="timer-display">${timerText}</div>`;
+        } else {
+          statusDiv.className = 'session-status session-inactive';
+          delete statusDiv.dataset.endTime;
+          statusDiv.innerHTML = '<strong>No Active Session</strong><br>Start a session (2 min duration) to allow attendance.';
+        }
+      } catch (err) {
+        statusDiv.className = 'session-status session-inactive';
+        delete statusDiv.dataset.endTime;
+        statusDiv.textContent = 'Could not load session status.';
+      }
+    }
+
+    /** Start a new attendance session */
+    async function startSession() {
+      const token = document.getElementById('token').value;
+      const maxLimit = parseInt(document.getElementById('maxLimit').value);
+      const allowMultipleDevices = document.getElementById('allowMultipleDevices').checked;
+      const errorDiv = document.getElementById('error');
+      errorDiv.textContent = '';
+
+      if (!token) { errorDiv.textContent = 'Enter admin token first.'; return; }
+      if (!maxLimit || maxLimit < 1) { errorDiv.textContent = 'Enter a valid max student limit.'; return; }
+
+      try {
+        const res = await fetch('/api/session/start', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': token },
+          body: JSON.stringify({ max_limit: maxLimit, allow_multiple_devices: allowMultipleDevices })
+        });
+        const data = await res.json();
+        if (!res.ok) { errorDiv.textContent = data.message || 'Failed to start session'; return; }
+        loadSessionStatus();
+      } catch (err) {
+        errorDiv.textContent = 'Network error starting session.';
+      }
+    }
+
+    /** End the currently active session */
+    async function endSession() {
+      const token = document.getElementById('token').value;
+      const errorDiv = document.getElementById('error');
+      errorDiv.textContent = '';
+
+      if (!token) { errorDiv.textContent = 'Enter admin token first.'; return; }
+
+      try {
+        const res = await fetch('/api/session/end', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': token }
+        });
+        const data = await res.json();
+        if (!res.ok) { errorDiv.textContent = data.message || 'Failed to end session'; return; }
+        loadSessionStatus();
+      } catch (err) {
+        errorDiv.textContent = 'Network error ending session.';
+      }
+    }
   </script>
 </body>
 </html>

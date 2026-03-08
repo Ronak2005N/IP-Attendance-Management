@@ -28,6 +28,16 @@
           <label for="student_name">Name:</label>
           <input type="text" id="student_name" name="student_name" required>
         </div>
+
+        <!-- Selfie capture section for visual verification -->
+        <div class="input-group selfie-group">
+          <label>Selfie Verification:</label>
+          <video id="selfie-video" autoplay playsinline style="display:none;width:100%;max-width:320px;border-radius:10px;margin-top:6px"></video>
+          <canvas id="selfie-canvas" style="display:none"></canvas>
+          <img id="selfie-preview" alt="Selfie preview" style="display:none;width:100%;max-width:320px;border-radius:10px;margin-top:6px">
+          <button type="button" id="capture-btn" onclick="captureSelfie()" style="margin-top:8px;padding:10px 18px;border-radius:10px;border:none;background:#0c5cc2;color:white;font-weight:600;cursor:pointer">📷 Open Camera</button>
+        </div>
+
         <button type="submit" class="login-button">Mark Attendance</button>
       </form>
       <div id="animal-container"><img class="animal-body" src="" alt=""></div>

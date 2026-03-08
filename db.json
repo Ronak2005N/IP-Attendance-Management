@@ -1,5 +1,176 @@
 {
   "users": {},
+  "sessions": [
+    {
+      "session_id": "4c2dc3fa-67d0-49ac-ad47-2e5ea53fe810",
+      "max_limit": 3,
+      "current_count": 0,
+      "used_devices": [],
+      "active": false,
+      "start_time": "2026-03-08T08:05:43.504Z",
+      "end_time": "2026-03-08T08:05:50.744Z"
+    },
+    {
+      "session_id": "9858f217-6943-4af5-94ec-033a9b4ad04d",
+      "max_limit": 3,
+      "current_count": 3,
+      "used_devices": [
+        "device-test-001",
+        "device-test-002",
+        "device-test-003"
+      ],
+      "active": false,
+      "start_time": "2026-03-08T08:05:50.746Z",
+      "end_time": "2026-03-08T08:10:18.825Z"
+    },
+    {
+      "session_id": "6afaf131-c5be-484e-8436-4178fa0eef59",
+      "max_limit": 2,
+      "current_count": 1,
+      "used_devices": [
+        "dfbf771e-c1b1-415d-87ac-962b632d3c00"
+      ],
+      "active": false,
+      "start_time": "2026-03-08T08:14:19.921Z",
+      "end_time": "2026-03-08T08:17:55.122Z"
+    },
+    {
+      "session_id": "f9205515-cfc2-4892-8762-eb80f3a8e72e",
+      "max_limit": 3,
+      "current_count": 1,
+      "used_devices": [
+        "dfbf771e-c1b1-415d-87ac-962b632d3c00"
+      ],
+      "active": false,
+      "start_time": "2026-03-08T08:21:47.023Z",
+      "end_time": "2026-03-08T08:32:15.785Z"
+    },
+    {
+      "session_id": "da0acedf-2103-44da-8eca-4b80be97c454",
+      "max_limit": 2,
+      "current_count": 2,
+      "used_devices": [
+        "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+        "dfbf771e-c1b1-415d-87ac-962b632d3c00"
+      ],
+      "active": false,
+      "allow_multiple_devices": true,
+      "start_time": "2026-03-08T08:32:31.329Z",
+      "end_time": "2026-03-08T08:33:44.918Z",
+      "duration_minutes": 3
+    },
+    {
+      "session_id": "e6e49f6d-98f3-4684-b531-79a132d4d9a9",
+      "max_limit": 3,
+      "current_count": 3,
+      "used_devices": [
+        "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+        "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+        "dfbf771e-c1b1-415d-87ac-962b632d3c00"
+      ],
+      "active": false,
+      "allow_multiple_devices": true,
+      "start_time": "2026-03-08T08:33:44.929Z",
+      "end_time": "2026-03-08T08:36:06.963Z",
+      "duration_minutes": 3
+    },
+    {
+      "session_id": "b2aa9c4e-2ff0-4e91-92dd-1faa2f053f40",
+      "max_limit": 5,
+      "current_count": 3,
+      "used_devices": [
+        "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+        "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+        "dfbf771e-c1b1-415d-87ac-962b632d3c00"
+      ],
+      "active": false,
+      "allow_multiple_devices": true,
+      "start_time": "2026-03-08T08:36:08.788Z",
+      "end_time": "2026-03-08T08:37:24.848Z",
+      "duration_minutes": 3
+    },
+    {
+      "session_id": "10629d4d-5c82-49c5-837d-2ae2f239db26",
+      "max_limit": 3,
+      "current_count": 3,
+      "used_devices": [
+        "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+        "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+        "dfbf771e-c1b1-415d-87ac-962b632d3c00"
+      ],
+      "active": false,
+      "allow_multiple_devices": true,
+      "start_time": "2026-03-08T08:37:24.854Z",
+      "end_time": "2026-03-08T08:38:18.601Z",
+      "duration_minutes": 3
+    },
+    {
+      "session_id": "c968ae1e-84ac-4cbb-b401-ff4be7279b1a",
+      "max_limit": 30,
+      "current_count": 3,
+      "used_devices": [
+        "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+        "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+        "dfbf771e-c1b1-415d-87ac-962b632d3c00"
+      ],
+      "active": false,
+      "allow_multiple_devices": true,
+      "start_time": "2026-03-08T08:38:18.606Z",
+      "end_time": "2026-03-08T08:39:22.539Z",
+      "duration_minutes": 3
+    },
+    {
+      "session_id": "143e952e-a824-4d42-8a48-24d507f557ae",
+      "max_limit": 30,
+      "current_count": 2,
+      "used_devices": [
+        "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+        "dfbf771e-c1b1-415d-87ac-962b632d3c00"
+      ],
+      "active": false,
+      "allow_multiple_devices": true,
+      "start_time": "2026-03-08T08:39:22.543Z",
+      "end_time": "2026-03-08T08:39:50.244Z",
+      "duration_minutes": 3
+    },
+    {
+      "session_id": "dc7b475d-806b-49e1-8c34-0684b6a11534",
+      "max_limit": 30,
+      "current_count": 1,
+      "used_devices": [
+        "dfbf771e-c1b1-415d-87ac-962b632d3c00"
+      ],
+      "active": false,
+      "allow_multiple_devices": true,
+      "start_time": "2026-03-08T08:39:50.251Z",
+      "end_time": "2026-03-08T08:40:16.851Z",
+      "duration_minutes": 3
+    },
+    {
+      "session_id": "8c1b345c-5a3a-4f4d-b733-e8ee537c37ab",
+      "max_limit": 30,
+      "current_count": 1,
+      "used_devices": [
+        "dfbf771e-c1b1-415d-87ac-962b632d3c00"
+      ],
+      "active": false,
+      "allow_multiple_devices": true,
+      "start_time": "2026-03-08T08:40:16.858Z",
+      "end_time": "2026-03-08T08:43:49.897Z",
+      "duration_minutes": 3
+    },
+    {
+      "session_id": "31bb822e-b30e-4851-9df3-c8477130c17f",
+      "max_limit": 1,
+      "current_count": 0,
+      "used_devices": [],
+      "active": true,
+      "allow_multiple_devices": false,
+      "start_time": "2026-03-08T08:43:56.996Z",
+      "end_time": "2026-03-08T08:45:56.996Z",
+      "duration_minutes": 2
+    }
+  ],
   "attendance": [
     {
       "timestamp": "2026-02-04T06:10:33.334Z",
@@ -323,6 +494,299 @@
       "isPrivate": true,
       "proxy": "",
       "reason": "private_ip"
+    },
+    {
+      "timestamp": "2026-03-08T07:22:48.268Z",
+      "student_id": "21120SDCE",
+      "student_name": "RonakASASASA",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "192.168.1.7",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip"
+    },
+    {
+      "timestamp": "2026-03-08T07:57:39.464Z",
+      "student_id": "21120SDCE",
+      "student_name": "Ronak",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "192.168.1.7",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip"
+    },
+    {
+      "timestamp": "2026-03-08T07:57:39.992Z",
+      "student_id": "21120SDCE",
+      "student_name": "Ronak",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "192.168.1.7",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip"
+    },
+    {
+      "timestamp": "2026-03-08T08:07:11.420Z",
+      "student_id": "S001",
+      "student_name": "Test Student",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "192.168.1.7",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip",
+      "deviceId": "device-test-001",
+      "selfie_path": "uploads/selfies/S001_1772957231289.jpg"
+    },
+    {
+      "timestamp": "2026-03-08T08:08:31.226Z",
+      "student_id": "S002",
+      "student_name": "Student 2",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "192.168.1.7",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip",
+      "deviceId": "device-test-002",
+      "selfie_path": "uploads/selfies/S002_1772957311170.jpg"
+    },
+    {
+      "timestamp": "2026-03-08T08:08:31.277Z",
+      "student_id": "S003",
+      "student_name": "Student 3",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "192.168.1.7",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip",
+      "deviceId": "device-test-003",
+      "selfie_path": "uploads/selfies/S003_1772957311244.jpg"
+    },
+    {
+      "timestamp": "2026-03-08T08:14:27.416Z",
+      "student_id": "123",
+      "student_name": "Ronak",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "192.168.1.7",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip",
+      "deviceId": "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+      "selfie_path": "uploads/selfies/123_1772957667343.jpg"
+    },
+    {
+      "timestamp": "2026-03-08T08:22:03.788Z",
+      "student_id": "01",
+      "student_name": "Ronak1",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "192.168.1.7",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip",
+      "deviceId": "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+      "selfie_path": "uploads/selfies/01_1772958123696.jpg"
+    },
+    {
+      "timestamp": "2026-03-08T08:32:53.179Z",
+      "student_id": "01",
+      "student_name": "Ronak1",
+      "status": "Present",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "10.31.209.127",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "ip_matched",
+      "deviceId": "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+      "selfie_path": "uploads/selfies/01_1772958773001.jpg"
+    },
+    {
+      "timestamp": "2026-03-08T08:33:16.927Z",
+      "student_id": "02",
+      "student_name": "Ronak2",
+      "status": "Present",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "10.31.209.127",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "ip_matched",
+      "deviceId": "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+      "selfie_path": "uploads/selfies/02_1772958796862.jpg"
+    },
+    {
+      "timestamp": "2026-03-08T08:33:56.760Z",
+      "student_id": "03",
+      "student_name": "Ronak3",
+      "status": "Present",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "10.31.209.127",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "ip_matched",
+      "deviceId": "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+      "selfie_path": "uploads/selfies/03_1772958836699.jpg"
+    },
+    {
+      "timestamp": "2026-03-08T08:34:10.229Z",
+      "student_id": "DKMD",
+      "student_name": "DCK",
+      "status": "Present",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "10.31.209.127",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "ip_matched",
+      "deviceId": "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+      "selfie_path": "uploads/selfies/DKMD_1772958850176.jpg"
+    },
+    {
+      "timestamp": "2026-03-08T08:35:06.308Z",
+      "student_id": "DKMDQQ",
+      "student_name": "DCKW",
+      "status": "Present",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "10.31.209.127",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "ip_matched",
+      "deviceId": "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+      "selfie_path": "uploads/selfies/DKMDQQ_1772958906249.jpg"
+    },
+    {
+      "timestamp": "2026-03-08T08:36:44.883Z",
+      "student_id": "11",
+      "student_name": "Ronak",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "192.168.1.7",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip",
+      "deviceId": "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+      "selfie_path": "uploads/selfies/11_1772959004510.jpg"
+    },
+    {
+      "timestamp": "2026-03-08T08:37:10.319Z",
+      "student_id": "11",
+      "student_name": "Ronak",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "192.168.1.7",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip",
+      "deviceId": "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+      "selfie_path": "uploads/selfies/11_1772959029826.jpg"
+    },
+    {
+      "timestamp": "2026-03-08T08:37:41.784Z",
+      "student_id": "32",
+      "student_name": "Ronak111",
+      "status": "Present",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "10.31.209.127",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "ip_matched",
+      "deviceId": "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+      "selfie_path": "uploads/selfies/32_1772959061359.jpg"
+    },
+    {
+      "timestamp": "2026-03-08T08:37:51.294Z",
+      "student_id": "32S",
+      "student_name": "Ronak111",
+      "status": "Present",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "10.31.209.127",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "ip_matched",
+      "deviceId": "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+      "selfie_path": "uploads/selfies/32S_1772959070916.jpg"
+    },
+    {
+      "timestamp": "2026-03-08T08:38:41.200Z",
+      "student_id": "23112025H",
+      "student_name": "Ronak",
+      "status": "Present",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "10.31.209.127",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "ip_matched",
+      "deviceId": "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+      "selfie_path": "uploads/selfies/23112025H_1772959120773.jpg"
+    },
+    {
+      "timestamp": "2026-03-08T08:39:17.790Z",
+      "student_id": "23112020",
+      "student_name": "ALSOH",
+      "status": "Present",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "10.31.209.127",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "ip_matched",
+      "deviceId": "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+      "selfie_path": "uploads/selfies/23112020_1772959157132.jpg"
+    },
+    {
+      "timestamp": "2026-03-08T08:39:25.000Z",
+      "student_id": "23112020",
+      "student_name": "ALSOH",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "192.168.1.7",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip",
+      "deviceId": "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+      "selfie_path": "uploads/selfies/23112020_1772959164820.jpg"
+    },
+    {
+      "timestamp": "2026-03-08T08:39:45.931Z",
+      "student_id": "23112020Q",
+      "student_name": "ALSOH",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "192.168.1.7",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip",
+      "deviceId": "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+      "selfie_path": "uploads/selfies/23112020Q_1772959185511.jpg"
+    },
+    {
+      "timestamp": "2026-03-08T08:39:54.110Z",
+      "student_id": "23112020Q",
+      "student_name": "ALSOH",
+      "status": "Present",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "10.31.209.127",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "ip_matched",
+      "deviceId": "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+      "selfie_path": "uploads/selfies/23112020Q_1772959193719.jpg"
+    },
+    {
+      "timestamp": "2026-03-08T08:40:23.431Z",
+      "student_id": "23112020QQ",
+      "student_name": "ALSOH",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "192.168.1.7",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip",
+      "deviceId": "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+      "selfie_path": "uploads/selfies/23112020QQ_1772959223037.jpg"
     }
   ]
 }

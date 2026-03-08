@@ -11,16 +11,19 @@ function loadDb() {
   try {
     if (!fs.existsSync(DB_FILE)) {
       console.log('[DB] db.json not found, creating new database');
-      const initialDb = { users: {}, attendance: [] };
+      const initialDb = { users: {}, sessions: [], attendance: [] };
       fs.writeFileSync(DB_FILE, JSON.stringify(initialDb, null, 2));
       return initialDb;
     }
     const data = fs.readFileSync(DB_FILE, 'utf-8');
-    return JSON.parse(data);
+    const db = JSON.parse(data);
+    // Ensure sessions array exists for backward compatibility
+    if (!db.sessions) db.sessions = [];
+    return db;
   } catch (error) {
     console.error('[DB] Error loading database:', error.message);
     // Return safe default structure
-    return { users: {}, attendance: [] };
+    return { users: {}, sessions: [], attendance: [] };
   }
 }
 
@@ -120,10 +123,107 @@ function getAllAttendance() {
   }
 }
 
+// ============================================================================
+// SESSION MANAGEMENT FUNCTIONS
+// ============================================================================
+
+/**
+ * Create a new attendance session
+ * @param {Object} sessionData Session object { session_id, max_limit, current_count, used_devices, active, start_time }
+ */
+function createSession(sessionData) {
+  try {
+    const db = loadDb();
+    db.sessions.push(sessionData);
+    saveDb(db);
+    console.log(`[DB] Session created: ${sessionData.session_id}`);
+  } catch (error) {
+    console.error('[DB] Error creating session:', error.message);
+    throw error;
+  }
+}
+
+/**
+ * Get the currently active session
+ * @returns {Object|null} Active session or null
+ */
+function getActiveSession() {
+  try {
+    const db = loadDb();
+    return db.sessions.find(s => s.active === true) || null;
+  } catch (error) {
+    console.error('[DB] Error getting active session:', error.message);
+    return null;
+  }
+}
+
+/**
+ * End a session (set active = false)
+ * @param {string} sessionId Session ID to end. If null, ends the currently active session.
+ */
+function endSession(sessionId) {
+  try {
+    const db = loadDb();
+    const session = sessionId
+      ? db.sessions.find(s => s.session_id === sessionId)
+      : db.sessions.find(s => s.active === true);
+    if (session) {
+      session.active = false;
+      session.end_time = new Date().toISOString();
+      saveDb(db);
+      console.log(`[DB] Session ended: ${session.session_id}`);
+    }
+    return session || null;
+  } catch (error) {
+    console.error('[DB] Error ending session:', error.message);
+    throw error;
+  }
+}
+
+/**
+ * Add a deviceId to the session's used_devices list and increment current_count
+ * @param {string} sessionId Session ID
+ * @param {string} deviceId Device ID to add
+ */
+function addDeviceToSession(sessionId, deviceId) {
+  try {
+    const db = loadDb();
+    const session = db.sessions.find(s => s.session_id === sessionId);
+    if (session) {
+      session.used_devices.push(deviceId);
+      session.current_count += 1;
+      saveDb(db);
+      console.log(`[DB] Device ${deviceId} added to session ${sessionId} (count: ${session.current_count})`);
+    }
+  } catch (error) {
+    console.error('[DB] Error adding device to session:', error.message);
+    throw error;
+  }
+}
+
+/**
+ * Get all sessions (for admin history)
+ * @returns {Array} All sessions
+ */
+function getAllSessions() {
+  try {
+    const db = loadDb();
+    return db.sessions || [];
+  } catch (error) {
+    console.error('[DB] Error retrieving sessions:', error.message);
+    return [];
+  }
+}
+
 module.exports = {
   addAttendance,
   getAttendanceForStudent,
   setExpectedIp,
   getExpectedIp,
   getAllAttendance,
+  createSession,
+  getActiveSession,
+  endSession,
+  addDeviceToSession,
+  getAllSessions,
 };

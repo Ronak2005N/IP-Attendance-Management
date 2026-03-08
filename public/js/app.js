@@ -13,15 +13,106 @@ function showToast(message, type = 'success') {
   }, 5000);
 }
 
+// ============================================================================
+// FEATURE 1: PERSISTENT DEVICE ID
+// Generate a unique device ID and store it in localStorage so each
+// browser/device can only submit attendance once per session.
+// ============================================================================
+let deviceId = localStorage.getItem('deviceId');
+if (!deviceId) {
+  deviceId = crypto.randomUUID();
+  localStorage.setItem('deviceId', deviceId);
+}
+
+// ============================================================================
+// FEATURE 5: SELFIE CAPTURE
+// Use the front-facing camera to take a photo for visual verification.
+// ============================================================================
+let selfieBase64 = null;
+let cameraStream = null;
+
+/** Start the front-facing camera and show the live preview */
+async function startCamera() {
+  const video = document.getElementById('selfie-video');
+  const captureBtn = document.getElementById('capture-btn');
+  const preview = document.getElementById('selfie-preview');
+
+  // If camera is already running, do nothing
+  if (cameraStream) return;
+
+  try {
+    cameraStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }
+    });
+    video.srcObject = cameraStream;
+    video.style.display = 'block';
+    captureBtn.textContent = '📸 Take Selfie';
+    preview.style.display = 'none';
+    selfieBase64 = null;
+  } catch (err) {
+    showToast('Camera access denied. Please allow camera.', 'error');
+    console.error('Camera error:', err);
+  }
+}
+
+/** Capture a frame from the video stream as a JPEG base64 string */
+function captureSelfie() {
+  const video = document.getElementById('selfie-video');
+  const canvas = document.getElementById('selfie-canvas');
+  const preview = document.getElementById('selfie-preview');
+  const captureBtn = document.getElementById('capture-btn');
+
+  if (!cameraStream) {
+    // Camera not started yet — start it first
+    startCamera();
+    return;
+  }
+
+  // Draw the current video frame onto the hidden canvas
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(video, 0, 0);
+
+  // Convert to JPEG base64 at 70% quality
+  selfieBase64 = canvas.toDataURL('image/jpeg', 0.7);
+
+  // Show the captured image preview
+  preview.src = selfieBase64;
+  preview.style.display = 'block';
+
+  // Stop the camera stream
+  cameraStream.getTracks().forEach(track => track.stop());
+  cameraStream = null;
+  video.style.display = 'none';
+  captureBtn.textContent = '🔄 Retake Selfie';
+}
+
+// ============================================================================
+// ATTENDANCE FORM SUBMISSION
+// Sends student_id, student_name, deviceId, and selfie to the server.
+// ============================================================================
 document.getElementById('attendance-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const studentId = document.getElementById('student_id').value.trim();
   const studentName = document.getElementById('student_name').value.trim();
+
+  // Validate selfie was captured
+  if (!selfieBase64) {
+    showToast('Please capture a selfie before submitting.', 'error');
+    return;
+  }
+
   try {
     const response = await fetch('/api/attendance/mark', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ student_id: studentId, student_name: studentName })
+      body: JSON.stringify({
+        student_id: studentId,
+        student_name: studentName,
+        deviceId: deviceId,
+        selfie: selfieBase64
+      })
     });
     const data = await response.json();
     showToast(data.message, response.ok ? 'success' : 'error');
