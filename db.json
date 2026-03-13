@@ -164,10 +164,25 @@
       "max_limit": 1,
       "current_count": 0,
       "used_devices": [],
-      "active": true,
+      "active": false,
       "allow_multiple_devices": false,
       "start_time": "2026-03-08T08:43:56.996Z",
-      "end_time": "2026-03-08T08:45:56.996Z",
+      "end_time": "2026-03-09T12:58:17.935Z",
+      "duration_minutes": 2
+    },
+    {
+      "session_id": "b3c45a8d-8a63-4fbf-ad9f-5b59bef7a225",
+      "max_limit": 5,
+      "current_count": 3,
+      "used_devices": [
+        "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+        "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+        "dfbf771e-c1b1-415d-87ac-962b632d3c00"
+      ],
+      "active": false,
+      "allow_multiple_devices": true,
+      "start_time": "2026-03-11T04:21:55.171Z",
+      "end_time": "2026-03-11T04:23:55.595Z",
       "duration_minutes": 2
     }
   ],
@@ -787,6 +802,32 @@
       "reason": "private_ip",
       "deviceId": "dfbf771e-c1b1-415d-87ac-962b632d3c00",
       "selfie_path": "uploads/selfies/23112020QQ_1772959223037.jpg"
+    },
+    {
+      "timestamp": "2026-03-11T04:22:28.919Z",
+      "student_id": "110326h",
+      "student_name": "Ronak",
+      "status": "Present",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "10.31.209.127",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "ip_matched",
+      "deviceId": "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+      "selfie_path": "uploads/selfies/110326h_1773202948389.jpg"
+    },
+    {
+      "timestamp": "2026-03-11T04:23:16.635Z",
+      "student_id": "110326",
+      "student_name": "RonakN",
+      "status": "Present",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "10.31.209.127",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "ip_matched",
+      "deviceId": "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+      "selfie_path": "uploads/selfies/110326_1773202996230.jpg"
     }
   ]
 }
