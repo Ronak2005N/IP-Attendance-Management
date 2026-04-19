@@ -195,10 +195,10 @@
         "dfbf771e-c1b1-415d-87ac-962b632d3c00",
         "dfbf771e-c1b1-415d-87ac-962b632d3c00"
       ],
-      "active": true,
+      "active": false,
       "allow_multiple_devices": true,
       "start_time": "2026-04-19T16:40:28.554Z",
-      "end_time": "2026-04-19T16:42:28.554Z",
+      "end_time": "2026-04-19T16:42:49.688Z",
       "duration_minutes": 2
     }
   ],
