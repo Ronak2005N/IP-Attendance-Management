@@ -13,6 +13,28 @@ function showToast(message, type = 'success') {
   }, 5000);
 }
 
+async function ensureSessionIsActive() {
+  try {
+    const response = await fetch('/api/session/active', { cache: 'no-store' });
+    const data = await response.json();
+
+    if (!response.ok) {
+      showToast('Could not verify session status. Try again.', 'error');
+      return false;
+    }
+
+    if (!data.active) {
+      showToast(data.message || 'No active attendance session. Please wait for the teacher.', 'error');
+      return false;
+    }
+
+    return true;
+  } catch (err) {
+    showToast('Server is unreachable. Ensure npm run dev is running.', 'error');
+    return false;
+  }
+}
+
 // ============================================================================
 // FEATURE 1: PERSISTENT DEVICE ID
 // Generate a unique device ID and store it in localStorage so each
@@ -97,6 +119,11 @@ document.getElementById('attendance-form').addEventListener('submit', async (e) 
   const studentId = document.getElementById('student_id').value.trim();
   const studentName = document.getElementById('student_name').value.trim();
 
+  const canSubmit = await ensureSessionIsActive();
+  if (!canSubmit) {
+    return;
+  }
+
   // Validate selfie was captured
   if (!selfieBase64) {
     showToast('Please capture a selfie before submitting.', 'error');
@@ -114,10 +141,20 @@ document.getElementById('attendance-form').addEventListener('submit', async (e) 
         selfie: selfieBase64
       })
     });
-    const data = await response.json();
-    showToast(data.message, response.ok ? 'success' : 'error');
+
+    const raw = await response.text();
+    let data = {};
+    try {
+      data = raw ? JSON.parse(raw) : {};
+    } catch (parseErr) {
+      data = { message: raw || '' };
+    }
+
+    const message = data.message || (response.ok ? 'Attendance submitted successfully.' : `Request failed (${response.status}).`);
+    showToast(message, response.ok ? 'success' : 'error');
   } catch (err) {
-    showToast('Error: Could not send data.', 'error');
+    const errorMessage = err && err.message ? err.message : 'Could not send data.';
+    showToast(`Error: ${errorMessage}`, 'error');
     console.error(err);
   }
 });

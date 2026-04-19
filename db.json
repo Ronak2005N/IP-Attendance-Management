@@ -184,6 +184,22 @@
       "start_time": "2026-03-11T04:21:55.171Z",
       "end_time": "2026-03-11T04:23:55.595Z",
       "duration_minutes": 2
+    },
+    {
+      "session_id": "35b618a2-6f0b-4071-92d8-c4eed32cc1d3",
+      "max_limit": 5,
+      "current_count": 4,
+      "used_devices": [
+        "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+        "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+        "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+        "dfbf771e-c1b1-415d-87ac-962b632d3c00"
+      ],
+      "active": true,
+      "allow_multiple_devices": true,
+      "start_time": "2026-04-19T16:40:28.554Z",
+      "end_time": "2026-04-19T16:42:28.554Z",
+      "duration_minutes": 2
     }
   ],
   "attendance": [
@@ -828,6 +844,45 @@
       "reason": "ip_matched",
       "deviceId": "dfbf771e-c1b1-415d-87ac-962b632d3c00",
       "selfie_path": "uploads/selfies/110326_1773202996230.jpg"
+    },
+    {
+      "timestamp": "2026-04-19T16:40:46.821Z",
+      "student_id": "21120",
+      "student_name": "Ronak",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "10.31.209.127",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip",
+      "deviceId": "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+      "selfie_path": "uploads/selfies/21120_1776616846335.jpg"
+    },
+    {
+      "timestamp": "2026-04-19T16:40:48.386Z",
+      "student_id": "21120",
+      "student_name": "Ronak",
+      "status": "Absent",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "10.31.209.127",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "private_ip",
+      "deviceId": "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+      "selfie_path": "uploads/selfies/21120_1776616848193.jpg"
+    },
+    {
+      "timestamp": "2026-04-19T16:41:09.889Z",
+      "student_id": "21120",
+      "student_name": "Ronak",
+      "status": "Present",
+      "clientIp": "127.0.0.1",
+      "allowedIp": "192.168.1.10",
+      "isPrivate": true,
+      "proxy": "",
+      "reason": "ip_matched",
+      "deviceId": "dfbf771e-c1b1-415d-87ac-962b632d3c00",
+      "selfie_path": "uploads/selfies/21120_1776616869763.jpg"
     }
   ]
 }
